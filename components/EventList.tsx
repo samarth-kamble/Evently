@@ -1,10 +1,13 @@
 "use client";
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+
 import React from "react";
-import Spinner from "./Spinner";
 import { CalendarDays, Ticket } from "lucide-react";
+import { useQuery } from "convex/react";
+
+import { api } from "@/convex/_generated/api";
+
 import EventsCard from "./EventsCard";
+import Spinner from "./Spinner";
 
 const EventList = () => {
   const events = useQuery(api.events.get);
