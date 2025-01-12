@@ -1,19 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
-import { ConvexProviderWithClerk } from "convex/react-clerk";
 import ConvexClerkProvider from "@/components/providers/ConvexClerkProvider";
 import Header from "@/components/Header";
 import SyncUserWithConvex from "@/components/providers/SyncUserWithConvex";
+import { Toaster } from "@/components/ui/toaster";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const manrope = Manrope({
   subsets: ["latin"],
 });
 
@@ -30,9 +23,8 @@ export default function RootLayout({
   return (
     <ConvexClerkProvider>
       <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+        <body className={`${manrope.className}  antialiased`}>
+          <Toaster />
           <Header />
           <SyncUserWithConvex />
           {children}
