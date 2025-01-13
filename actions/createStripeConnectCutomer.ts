@@ -13,7 +13,6 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL);
 
 export const createStripeConnectCutomer = async () => {
   const { userId } = await auth();
-
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -25,7 +24,6 @@ export const createStripeConnectCutomer = async () => {
       userId,
     }
   );
-
   if (existingStripeConnectId) {
     return { account: existingStripeConnectId };
   }
