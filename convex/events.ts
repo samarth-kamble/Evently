@@ -6,6 +6,13 @@ import { processQueue } from "./waitingList";
 import { MINUTE, RateLimiter } from "@convex-dev/rate-limiter";
 // import { components } from "./_generated/server";
 
+export type Metrics = {
+  soldTickets: number;
+  refundedTickets: number;
+  cancelledTickets: number;
+  revenue: number;
+};
+
 // Initialize rate limiter
 // const rateLimiter = new RateLimiter(components.rateLimiter, {
 //   queueJoin: {
@@ -14,6 +21,66 @@ import { MINUTE, RateLimiter } from "@convex-dev/rate-limiter";
 //     period: 30 * MINUTE, // in 30 minutes
 //   },
 // });
+
+export const create = mutation({
+  args: {
+    name: v.string(),
+    description: v.string(),
+    location: v.string(),
+    eventDate: v.number(), // Store as timestamp
+    price: v.number(),
+    totalTickets: v.number(),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const eventId = await ctx.db.insert("events", {
+      name: args.name,
+      description: args.description,
+      location: args.location,
+      eventDate: args.eventDate,
+      price: args.price,
+      totalTickets: args.totalTickets,
+      userId: args.userId,
+    });
+    return eventId;
+  },
+});
+
+export const updateEvent = mutation({
+  args: {
+    eventId: v.id("events"),
+    name: v.string(),
+    description: v.string(),
+    location: v.string(),
+    eventDate: v.number(),
+    price: v.number(),
+    totalTickets: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const { eventId, ...updates } = args;
+
+    // Get current event to check tickets sold
+    const event = await ctx.db.get(eventId);
+    if (!event) throw new Error("Event not found");
+
+    const soldTickets = await ctx.db
+      .query("tickets")
+      .withIndex("by_event", (q) => q.eq("eventId", eventId))
+      .filter((q) =>
+        q.or(q.eq(q.field("status"), "valid"), q.eq(q.field("status"), "used"))
+      )
+      .collect();
+
+    // Ensure new total tickets is not less than sold tickets
+    if (updates.totalTickets < soldTickets.length) {
+      throw new Error(
+        `Cannot reduce total tickets below ${soldTickets.length}(number of tickets already sold).`
+      );
+    }
+    await ctx.db.patch(args.eventId, updates);
+    return eventId;
+  },
+});
 
 export const get = query({
   args: {},
