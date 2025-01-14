@@ -66,7 +66,7 @@ const EventForm = ({ mode, initialData }: EventFormProps) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
-  
+
   const currentImageUrl = useStorageUrl(initialData?.imageStorageId);
 
   //Image Upload
@@ -225,7 +225,7 @@ const EventForm = ({ mode, initialData }: EventFormProps) => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea {...field} />
+                    <Textarea {...field} placeholder={"Enter little more about event...."} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -239,7 +239,7 @@ const EventForm = ({ mode, initialData }: EventFormProps) => {
                 <FormItem>
                   <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} placeholder={"Enter a location of the event."}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
