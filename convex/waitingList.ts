@@ -20,7 +20,7 @@ export const releaseTicket = mutation({
     });
 
     // Process queue to offer ticket to next person
-    // await processQueue(ctx, { eventId });
+    await processQueue(ctx, { eventId });
   },
 });
 
